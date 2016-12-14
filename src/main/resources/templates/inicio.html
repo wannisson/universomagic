@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+  <script th:src="@{/js/jquery.min.js}"></script>
+  <script th:src="@{/js/bootstrap.min.js}"></script>
+<head>
+<title>Universo Magic</title>
+<meta charset='utf-8' />
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<script th:src="@{/js/all.js}"></script>
+ <style>
+  .modal-header, h4, .close {
+      background-color: #5cb85c;
+      color:white !important;
+      text-align: center;
+      font-size: 30px;
+  }
+  .modal-footer {
+      background-color: #f9f9f9;
+  }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid-fixed">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">P3 - Universo Magic</a>
+      <!--h1 th:inline="text">Olá [[${#httpServletRequest.remoteUser}]]</h1-->
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+      
+        <div>
+          <input th:if="${#httpServletRequest.remoteUser}" type="text" id="nome" name="nome" class="form-control" placeholder="Buscar/importar"/>
+          <input th:if="!${#httpServletRequest.remoteUser}" type="text" id="nome" name="nome" class="form-control" placeholder="Buscar"/>
+        </div>
+	
+      <button type="button" onclick="buscarCarta()" class="btn btn-success">Buscar</button>
+      <button th:if="${#httpServletRequest.remoteUser}" type="button" onclick="cadastrarCarta()" class="btn btn-info">Importar Carta</button>
+      <ul class="nav navbar-nav navbar-right">
+       
+        <li>
+          <a class="glyphicon glyphicon-user"  th:if="!${#httpServletRequest.remoteUser}" id="myBtn" role="button" aria-haspopup="true" aria-expanded="false"> Logar</a>
+           
+           <form th:action="@{/logout}" method="post" th:if="${#httpServletRequest.remoteUser}">
+            <button class="btn btn-default" > <span class="glyphicon glyphicon-user" type="submit" value="Sair"></span> Sair </button>            
+        	</form>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+		<!--div>
+		
+  			<div class="col-xs-2 col-md-3" th:each="cart : ${carts}" >
+    		   		
+    		<p style="color:white;text-align:center;" id="cart_nome" th:text="${cart.name}"><br></br></p>
+    		
+    		<a href="#" class="thumbnail" id="idImagem">
+      		<img th:src="${cart.imageUrl}" alt="..."/>
+    		</a>
+    		
+  			<span class="glyphicon glyphicon-yen" style="color:red;"> ManaCost:   <a style="color:white;" id="cart_custo_mana" th:text="${cart.manaCost}"></a></span>
+  			<span class="glyphicon glyphicon-plus" style="color:red;"> Poder Ataque:   <a style="color:white;" id="cart_poder_ataque" th:text="${cart.power}"></a></span>
+  			<span class="glyphicon glyphicon-minus" style="color:red;"> Poder Defesa:   <a style="color:white;" id="cart_poder_defesa" th:text="${cart.toughness}"></a></span>
+  			</div>
+		</div-->
+		
+			<div class="" th:each="cart : ${carts}">
+  			<div class="col-sm-6 col-md-4">
+    		<div class="thumbnail">
+      		<img th:src="${cart.imageUrl}" alt="..."/>
+      		<div class="caption">
+       	    <h3 th:inline="text" style="text-align: center;">[[${cart.name}]]</h3>
+        	<p>.....................................................................................................................</p>
+        	<p><a class="btn btn-primary" th:inline="text">ManaCost: [[${cart.manaCost}]]</a>	 <a class="btn btn-success" th:inline="text">Ataque: [[${cart.power}]]</a> <a class="btn btn-danger" th:inline="text">Defesa: [[${cart.toughness}]]</a></p>
+      		
+      		</div>
+    		</div>
+  			</div>
+			</div>
+
+	
+ <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="padding:35px 50px;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
+        </div>
+        <div class="modal-body" style="padding:40px 50px;">
+          <span th:if="${param.error}">Usuario ou Senha Invalido.</span>
+          <div th:if="${param.logout}">Bem Vindo Administrador</div>
+          <form role="form" th:action="@{/login}" method="post">
+            <div class="form-group">
+              <label for="usrname"><span class="glyphicon glyphicon-user"></span> Usuario: admin</label>
+              <input type="text" class="form-control" name="username" id="usrname" placeholder="Entre usuario"/>
+            </div>
+            <div class="form-group">
+              <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Senha: 321</label>
+              <input type="password" class="form-control" name="password" id="psw" placeholder="Entre senha"/>
+            </div>
+            
+              <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Entrar</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+        </div>
+      </div>
+      
+    </div>
+  </div> 
+ 
+<script>
+$(document).ready(function(){
+    $("#myBtn").click(function(){
+        $("#myModal").modal();
+    });
+});
+
+$(document).ready(function(){
+	$("#idImagem").click(function(){
+		$("#myModalCarta").modal();
+	});
+});
+
+function buscarCarta() {
+	 var carta = document.getElementById('nome').value;
+		window.location="http://localhost:8080/buscar?nome="+carta;
+		
+	
+}
+
+function cadastrarCarta() {
+	var url = document.getElementById('nome').value;
+	window.location="http://localhost:8080/import?url="+url;
+
+}
+
+var num = 50; // tanto de scroll que vai precisar para a barra ficar fixa.
+
+$(window).bind('scroll', function () {
+    if ($(window).scrollTop() > num) {
+        $('.navbar-fixed-top').css('top', 0);
+    } else {
+       //Quando o menu ficar fixo
+        $('.navbar-fixed-top').css('top', 130); 
+    }
+});
+
+
+</script>
+</body>
+</html>
